@@ -1,0 +1,150 @@
+---
+swagger: "2.0"
+info:
+  description: "Test"
+  version: "1.0.0"
+  title: "Test API with example json"
+host: "jsonplaceholder.typicode.com"
+schemes:
+- "https"
+produces:
+- "application/json"
+paths:
+  /posts:
+    get:
+      tags:
+      - "Posts"
+      summary: "Posts"
+      description: "Get all posts."
+      parameters: []
+      responses:
+        200:
+          description: "An array of posts"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Posts"
+        default:
+          description: "Unexpected error"
+          schema:
+            $ref: "#/definitions/Error"
+    post:
+      tags:
+      - "Posts"
+      summary: "Add post"
+      description: "Add a post\n"
+      parameters:
+      - in: "body"
+        name: "post"
+        description: "The properties of the post to be created"
+        required: true
+        schema:
+          $ref: "#/definitions/Posts"
+      responses:
+        200:
+          description: "post added"
+          schema:
+            $ref: "#/definitions/Posts"
+        default:
+          description: "Unexpected error"
+          schema:
+            $ref: "#/definitions/Error"
+  /posts/{id}:
+    get:
+      tags:
+      - "Posts"
+      summary: "Post by id"
+      description: "Post by id\n"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "number"
+      responses:
+        200:
+          description: "Post by id"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Posts"
+        default:
+          description: "Unexpected error"
+          schema:
+            $ref: "#/definitions/Error"
+  /posts/{id}/comments:
+    get:
+      tags:
+      - "Posts"
+      summary: "Post comments"
+      description: "Get comments for post."
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Comments for a post"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Comments"
+        default:
+          description: "Unexpected error"
+          schema:
+            $ref: "#/definitions/Error"
+definitions:
+  Posts:
+    type: "object"
+    properties:
+      userId:
+        type: "string"
+        description: "user id."
+      id:
+        type: "string"
+        description: "post id."
+      title:
+        type: "string"
+        description: "post title."
+      body:
+        type: "string"
+        description: "post description."
+    example:
+      id: "id"
+      title: "title"
+      body: "body"
+      userId: "userId"
+  Comments:
+    type: "object"
+    properties:
+      postId:
+        type: "string"
+        description: "post id"
+      id:
+        type: "string"
+        description: "comment id"
+      name:
+        type: "string"
+        description: "user name who commented."
+      email:
+        type: "string"
+        description: "email id of user."
+      body:
+        type: "number"
+        description: "comment text."
+    example:
+      name: "name"
+      postId: "postId"
+      id: "id"
+      body: 0.80082819046101150206595775671303272247314453125
+      email: "email"
+  Error:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      message:
+        type: "string"
+      fields:
+        type: "string"

@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Test</title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <title>SoupedUp</title>
+    <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.5.2/redux.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="css/font/css/font-awesome.css"/>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+
+        <div class="pull-right help-block"> No.of Requests : <span id="counter">0</span></div>
+
+        <form>
+            <div class="col-lg-3">
+                <h2>Get Comments</h2>
+                <div class="form-group">
+                    <label for="post-id">Post-Id</label>
+                    <input type="text" id="post-id" class="form-control"/>
+                </div>
+                <input type="button" id="get-comments" class="btn btn-primary" value="Get Comments" onclick="actions.getComments()"/>
+            </div>
+        </form>
+        </div>
+
+       <div class="clearfix"></div> <br/>
+        <div class="resposive-table">
+            <table id="comments" class="table table-bordered" style="display: none">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Comment</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+        <span id="response" class="alert alert-danger" style="display: none">No comments added for this post</span>
+    </div>
+</div>
+</body>
+<footer>
+    <script type="text/javascript">
+        let actions = {
+            getComments() {
+                model.accept({ postId: $('#post-id').val()})
+            }
+        };
+
+        let model = {
+            comments: [],
+            accept(proposal) {
+                if(proposal.postId.trim() !== '') {
+                    var session = $.get("https://jsonplaceholder.typicode.com/posts/" + proposal.postId + "/comments");
+                    session.done(function (result) {
+                        this.comments = result;
+                        state.render(this).then(state.nap)
+                    });
+                }
+            }
+        };
+
+        let state = {
+            render(model) {
+                return new Promise( function(resolve ) {
+                    $('#comments tbody').html('');
+                    if(model.comments.length > 0) {
+                        $('#comments').show();
+                        $('#response').hide();
+                    } else {
+                        $('#response').show();
+                        $('#comments').hide();
+                    }
+                    $.each(model.comments, function (i, comment) {
+                        $('#comments tbody').append('<tr><td>' + comment.name + '</td><td>' + comment.email + '</td><td>' + comment.body + '</td></tr>');
+                    });
+
+                    actions1.countByOne();
+                    resolve(model)
+                });
+            },
+
+            nap(model) {
+                return false
+            }
+        }
+
+
+
+        let actions1 = {
+            countByOne() {
+                model1.accept({ incrementBy: 1 })
+            }
+        };
+
+        let model1 = {
+            counter: 0,
+            accept(proposal) {
+                this.counter += proposal.incrementBy > 0 ? proposal.incrementBy : 0
+                state1.render(this).then(state1.nap)
+            }
+        };
+
+        let state1 = {
+            render(model1) {
+                return new Promise( function(resolve ) {
+                    document.getElementById("counter").innerHTML = model1.counter
+                    resolve(model1)
+                })
+            },
+
+            nap(model1) {
+                return false
+            }
+        }
+
+    </script>
+</footer>
+</html>
